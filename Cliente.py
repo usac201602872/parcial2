@@ -4,10 +4,18 @@ import socket
 import sys
 import os
 import paho.mqtt.client as paho
+import threading
+import time
+import datetime
+import binascii
 
 SERVER_IP = '' #Colocar en el medio de las comillas la ip a utilizar
-SERVER_PORT = 9814
+SERVER_PORT = 9817
 BUFFER_SIZE = 64 * 1024
+MQTT_HOST = '167.71.243.238'
+MQTT_PORT = '1883'
+MQTT_USER = 'proyectos'
+MQTT_PASS = 'proyectos980'
 
 while True:
     
@@ -32,7 +40,6 @@ while True:
         logging.info('Comenzando grabacion')
         os.system('arecord -d 10 -f U8 -r 8000 audio.mp3')
 
-
         f = open ("audio.mp3", "rb")
         l = f.read(BUFFER_SIZE)
         while (l):
@@ -45,6 +52,7 @@ while True:
         # Esperamos la respuesta del ping servidor
         bytesR = 0  #Bit a ser Recividos
         bytesE = len(message) #Bits a ser enviados
+        
     finally:
         print('\n\nConexion finalizada con el servidor')
         sock.close()
