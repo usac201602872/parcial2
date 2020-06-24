@@ -93,16 +93,17 @@ try:
 except KeyboardInterrupt:
     print('\n\nSe ha deconectado del servidor')
 
-# Credenciales para topics
-separador = '/'
-Entrada = Persona.getEntrada()
-Grupo = Persona.getGrupo()
-ID = Persona.getID()
-topic = Entrada+separador+Grupo+separador+ID
+
 
 
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
     try: 
+        # Credenciales para topics
+        separador = '/'
+        Entrada = Persona.getEntrada()
+        Grupo = Persona.getGrupo()
+        ID = Persona.getID()
+        topic = Entrada+separador+Grupo+separador+ID
         if Entrada == 'mensaje':
             a_enviar = input ("Escribe un mensaje ---> ")#Aca se solicita el mensaje
             a_enviar = ID + ": " + a_enviar #Se concatena y se incluye el nombre dentro del mensaje
