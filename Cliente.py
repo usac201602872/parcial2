@@ -93,13 +93,10 @@ try:
 except KeyboardInterrupt:
     print('\n\nSe ha deconectado del servidor')
 
-
-
-
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
     try: 
         # Credenciales para topics
-        separador = '/'
+        separador = "/"
         Entrada = Persona.getEntrada()
         Grupo = Persona.getGrupo()
         ID = Persona.getID()
