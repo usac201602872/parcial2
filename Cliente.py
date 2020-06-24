@@ -35,6 +35,13 @@ class ComandoInvalido(Exception):
     def __str__(self):
         return str("Perdon, pero "+ str(self.comando)+" no es valido. Escriba las opciones que se les dieron.")
 
+class Name(Exception):
+    def __init__(self,name):
+        self.name = name
+    
+    def __str__(self):
+        return str("Feliz Dia")
+
 
 # Credenciales para el archivo de audio
 SERVER_IP = '' #Colocar en el medio de las comillas la ip a utilizar
@@ -63,11 +70,8 @@ def on_message(client, userdata, msg): #declaramos una funcion que sera ejecutad
     #logging.info('Grabacion finalizada, inicia reproduccion')#Iniciacion y Visualizacion de la informacion final de la grabacion de audio
     #os.system('aplay audio.wav')
 
-print("Bienvenido al Chat hecho con MQTT.\nPor favor, ingrese los siguientes datos:")
-e = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
-g = input('Entre a que grupo quiere ir(solo el numero):')
-i = input('Entre a que usuario(carne o sala) quiere enviar:')
-Persona = Desicion(e,g,i)
+print("Bienvenido al Chat hecho con MQTT.\nPor favor, ingrese los siguientes datos")
+
 
 #-------------------------------------------- Configuracion Inicial para conectarse al broker --------------------------------
 
@@ -87,9 +91,19 @@ def audio_thread(tiempo):  # Hilo solo de audio
     cliente.publish("USUARIO", enviar_audio) #Se publica el audio que se quiere enviar
 
 
+try:
+    e = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
+    g = input('Entre a que grupo quiere ir(solo el numero):')
+    i = input('Entre a que usuario(carne o sala) quiere enviar:')
+    Persona = Desicion(e,g,i) 
+except KeyboardInterrupt:
+    print('\n\nSe ha deconectado del servidor')
+
+
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
         # Credenciales para topics
-    try:    
+    try: 
+         
         separador = '/'
         Entrada = Persona.getEntrada()
         Grupo = Persona.getGrupo()
@@ -108,7 +122,7 @@ while True: #generacion de bucle infinito para ir solicitando al usuario que vay
                 ni = input('Entre a que usuario(carne o sala) quiere enviar:')
                 Persona.modifyDesicion(ne,ng,ni)
             elif d == "N" or d == "n":
-                    print ('Saliendo del servidor')
+                    print ('Conexion con el servidor finalizada')
                     break
             else:
                 raise ComandoInvalido(d)
@@ -125,12 +139,12 @@ while True: #generacion de bucle infinito para ir solicitando al usuario que vay
                 ni = input('Entre a que usuario(carne o sala) quiere enviar:')
                 Persona.modifyDesicion(ne,ng,ni)
             elif d == "N" or d == "n":
-                print ('Saliendo del servidor')
+                print ('Conexion con el servidor finalizada')
                 break
             else:
                 raise ComandoInvalido(d)
         else:
             raise ComandoInvalido(Entrada)
     except KeyboardInterrupt:
-        print('\n\nConexion finalizada con el servidor')
+        print('\n\nSe ha deconectado del servidor')
         break
