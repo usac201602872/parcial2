@@ -1,8 +1,8 @@
 import paho.mqtt.client as mqtt #importamos libreria de mqtt paho
 import logging #Loggin Reemplaza al print
-import time  #
-import os
-import threading 
+import time  
+import os   #Para acceder al audio
+import threading  #Para los hilo
 import sys  
 import binascii
 import datetime
@@ -96,6 +96,7 @@ except KeyboardInterrupt:
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
     try: 
         # Credenciales para topics
+        global topic
         separador = "/"
         Entrada = Persona.getEntrada()
         Grupo = Persona.getGrupo()
