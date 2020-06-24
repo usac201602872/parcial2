@@ -49,10 +49,10 @@ SERVER_PORT = 9817 #Puerto del Socket a utilizar
 BUFFER_SIZE = 64 * 1024 #Buffer de 64 KB
 
 # Credenciales de MQTT
-MQTT_HOST = "localhost"  #'167.71.243.238'
+MQTT_HOST = "167.71.243.238"
 MQTT_PORT =  1883        #numero de Puerto
 MQTT_USER = "proyectos" #Nombre del usuario del MQTT
-MQTT_PASS = "frank32MH16" #'proyectos980'
+MQTT_PASS = "proyectos980"
 
 
 #nombre = input("dime tu nombre: ")#con el input lo que hacemos es solicitar el nombre del participante
@@ -60,8 +60,8 @@ MQTT_PASS = "frank32MH16" #'proyectos980'
 
 def on_connect(client, userdata, flags, rc):#funcion que se ejecuta por la libreria MQTT
     logging.info("Conectado al broker")
-    client.subscribe("USUARIO") #topic donde se va a suscribir
-    client.publish("USUARIO") #enviamos un mensaje con el metodo "publish" con el topico raiz avisando que hemos ingresado
+    client.subscribe(topic) #topic donde se va a suscribir
+    client.publish(topic) #enviamos un mensaje con el metodo "publish" con el topico raiz avisando que hemos ingresado
                                                              
 
 def on_message(client, userdata, msg): #declaramos una funcion que sera ejecutada por la libreria MQTT cuando llegue un mensaje desde el servidor
@@ -88,7 +88,7 @@ def audio_thread(tiempo):  # Hilo solo de audio
     os.system('arecord -d '+tiempo+' -f U8 -r 8000 audio.wav')
     f = open ("audio.wav", "rb")
     enviar_audio = f.read(BUFFER_SIZE)
-    cliente.publish("USUARIO", enviar_audio) #Se publica el audio que se quiere enviar
+    cliente.publish(topic, enviar_audio) #Se publica el audio que se quiere enviar
 
 
 try:
@@ -114,8 +114,8 @@ while True: #generacion de bucle infinito para ir solicitando al usuario que vay
         if Entrada == 'mensaje':
             a_enviar = input ("Escribe un mensaje ---> ")#Aca se solicita el mensaje
             a_enviar = ID + ": " + a_enviar #Se concatena y se incluye el nombre dentro del mensaje
-            cliente.publish("USUARIO", a_enviar) #Se publica el mensaje que se quiere enviar
-            d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
+            cliente.publish(topic, a_enviar) #Se publica el mensaje que se quiere enviar
+            d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:") #Para seguir usando el programa y cambiar el topic
             if d == "Y" or d == "y":
                 ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
                 ng = input('Entre a que grupo quiere ir(solo el numero):')
