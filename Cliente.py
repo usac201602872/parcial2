@@ -79,6 +79,13 @@ cliente.connect(host=MQTT_HOST, port=MQTT_PORT)
 cliente.loop_start() #si esto no se ejecuta todo el tiempo no podemos recibir mensajes
 #-------------------------------------------------------------------------------------------------------------------------------
 
+def audio_thread(tiempo):  # Hilo solo de audio
+    logging.info('Comenzando grabacion')
+    os.system('arecord -d '+tiempo+' -f U8 -r 8000 audio.wav')
+    f = open ("audio.wav", "rb")
+    enviar_audio = f.read(BUFFER_SIZE)
+    cliente.publish("USUARIO", enviar_audio) #Se publica el audio que se quiere enviar
+
 
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
     # Credenciales para topics
@@ -107,11 +114,9 @@ while True: #generacion de bucle infinito para ir solicitando al usuario que vay
         
     elif Entrada == 'audio':
         duracion = input("Cuanto tiempo, en s, quiere grabar? :")
-        logging.info('Comenzando grabacion')
-        os.system('arecord -d '+duracion+' -f U8 -r 8000 audio.wav')
-        f = open ("audio.wav", "rb")
-        enviar_audio = f.read(BUFFER_SIZE)
-        cliente.publish("USUARIO", enviar_audio) #Se publica el audio que se quiere enviar
+        voice = threading.Thread(target=audio_thread, args=(duracion)) #El hilo del audio
+        voice.start() # Para iniciar el hilo
+        voice.join() # espera a que el hilo termine, sin este, solo con un time.sleep(1) para continuar con el programa.
         d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
         if d == "Y" or d == "y":
             ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
