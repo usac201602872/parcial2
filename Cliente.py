@@ -88,45 +88,49 @@ def audio_thread(tiempo):  # Hilo solo de audio
 
 
 while True: #generacion de bucle infinito para ir solicitando al usuario que vaya ingresando los mensajes
-    # Credenciales para topics
-    separador = '/'
-    Entrada = Persona.getEntrada()
-    Grupo = Persona.getGrupo()
-    ID = Persona.getID()
+        # Credenciales para topics
+    try:    
+        separador = '/'
+        Entrada = Persona.getEntrada()
+        Grupo = Persona.getGrupo()
+        ID = Persona.getID()
 
-    topic = Entrada+separador+Grupo+separador+ID
-     
-    if Entrada == 'mensaje':
-        a_enviar = input ("Escribe un mensaje ---> ")#Aca se solicita el mensaje
-        a_enviar = ID + ": " + a_enviar #Se concatena y se incluye el nombre dentro del mensaje
-        cliente.publish("USUARIO", a_enviar) #Se publica el mensaje que se quiere enviar
-        d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
-        if d == "Y" or d == "y":
-            ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
-            ng = input('Entre a que grupo quiere ir(solo el numero):')
-            ni = input('Entre a que usuario(carne o sala) quiere enviar:')
-            Persona.modifyDesicion(ne,ng,ni)
-        elif d == "N" or d == "n":
+        topic = Entrada+separador+Grupo+separador+ID
+        
+        if Entrada == 'mensaje':
+            a_enviar = input ("Escribe un mensaje ---> ")#Aca se solicita el mensaje
+            a_enviar = ID + ": " + a_enviar #Se concatena y se incluye el nombre dentro del mensaje
+            cliente.publish("USUARIO", a_enviar) #Se publica el mensaje que se quiere enviar
+            d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
+            if d == "Y" or d == "y":
+                ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
+                ng = input('Entre a que grupo quiere ir(solo el numero):')
+                ni = input('Entre a que usuario(carne o sala) quiere enviar:')
+                Persona.modifyDesicion(ne,ng,ni)
+            elif d == "N" or d == "n":
+                    print ('Saliendo del servidor')
+                    break
+            else:
+                raise ComandoInvalido(d)
+            
+        elif Entrada == 'audio':
+            duracion = input("Cuanto tiempo, en s, quiere grabar? :")
+            voice = threading.Thread(target=audio_thread, args=(duracion)) #El hilo del audio
+            voice.start() # Para iniciar el hilo
+            voice.join() # espera a que el hilo termine, sin este, solo con un time.sleep(1) para continuar con el programa.
+            d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
+            if d == "Y" or d == "y":
+                ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
+                ng = input('Entre a que grupo quiere ir(solo el numero):')
+                ni = input('Entre a que usuario(carne o sala) quiere enviar:')
+                Persona.modifyDesicion(ne,ng,ni)
+            elif d == "N" or d == "n":
                 print ('Saliendo del servidor')
                 break
+            else:
+                raise ComandoInvalido(d)
         else:
-            raise ComandoInvalido(d)
-        
-    elif Entrada == 'audio':
-        duracion = input("Cuanto tiempo, en s, quiere grabar? :")
-        voice = threading.Thread(target=audio_thread, args=(duracion)) #El hilo del audio
-        voice.start() # Para iniciar el hilo
-        voice.join() # espera a que el hilo termine, sin este, solo con un time.sleep(1) para continuar con el programa.
-        d = input("Quiere seguir enviando otro tipo de mensaje a un usuario diferente? [Y/N]:")
-        if d == "Y" or d == "y":
-            ne = input('Que tipo de mensaje quiere enviar(mensaje, audio):')
-            ng = input('Entre a que grupo quiere ir(solo el numero):')
-            ni = input('Entre a que usuario(carne o sala) quiere enviar:')
-            Persona.modifyDesicion(ne,ng,ni)
-        elif d == "N" or d == "n":
-            print ('Saliendo del servidor')
-            break
-        else:
-            raise ComandoInvalido(d)
-    else:
-        raise ComandoInvalido(Entrada)
+            raise ComandoInvalido(Entrada)
+    except KeyboardInterrupt:
+        print('\n\nConexion finalizada con el servidor')
+        break
